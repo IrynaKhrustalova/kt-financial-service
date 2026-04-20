@@ -5,6 +5,7 @@ const val TO_USD_RATE = 0.82
 const val DEFAULT_RATE = 1.0
 const val ZERO_AMOUNT = 0.0
 const val CODE_LENGTH = 3
+const val ACCOUNT_NUMBER_LENGTH = 10
 
 class FinancialService {
 
@@ -42,7 +43,8 @@ class FinancialService {
 value class AccountNumber(val accountNumber: String) {
     init {
         val regex = "[A-Za-z]".toRegex()
-        require (accountNumber.length == 10 && accountNumber.isNotEmpty() && !accountNumber.contains(regex)) {
+        require (accountNumber.length == ACCOUNT_NUMBER_LENGTH
+                && accountNumber.isNotEmpty() && !accountNumber.contains(regex)) {
             "Invalid account number format $accountNumber"
         }
     }
