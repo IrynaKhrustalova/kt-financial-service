@@ -1,5 +1,11 @@
 package mate.academy
 
+const val TO_EURO_RATE = 0.93
+const val TO_USD_RATE = 0.82
+const val DEFAULT_RATE = 1.0
+const val ZERO_AMOUNT = 0.0
+const val CODE_LENGTH = 3
+
 class FinancialService {
 
     fun transferFunds(
@@ -25,9 +31,9 @@ class FinancialService {
     private fun getExchangeRate(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): Double {
         // Placeholder exchange rate - in a real application, you'd fetch this from a financial API
         return when {
-            fromCurrency.code == "USD" && toCurrency.code == "EUR" -> 0.93
-            fromCurrency.code == "USD" && toCurrency.code == "GBP" -> 0.82
-            else -> 1.0
+            fromCurrency.code == "USD" && toCurrency.code == "EUR" -> TO_EURO_RATE
+            fromCurrency.code == "USD" && toCurrency.code == "GBP" -> TO_USD_RATE
+            else -> DEFAULT_RATE
         }
     }
 }
@@ -36,8 +42,8 @@ class FinancialService {
 value class AccountNumber(val accountNumber: String) {
     init {
         val regex = "[A-Za-z]".toRegex()
-        if (accountNumber.length != 10 || accountNumber.isEmpty() || accountNumber.contains(regex)) {
-            throw IllegalArgumentException("Invalid account number format $accountNumber")
+        require (accountNumber.length == 10 && accountNumber.isNotEmpty() && !accountNumber.contains(regex)) {
+            "Invalid account number format $accountNumber"
         }
     }
 }
@@ -45,8 +51,8 @@ value class AccountNumber(val accountNumber: String) {
 @JvmInline
 value class CurrencyAmount(val amount: Double) {
     init {
-        if (amount < 0.0) {
-            throw IllegalArgumentException("Invalid amount format $amount")
+        require(amount > ZERO_AMOUNT) {
+            "Invalid amount format $amount"
         }
     }
 }
@@ -54,8 +60,8 @@ value class CurrencyAmount(val amount: Double) {
 @JvmInline
 value class CurrencyCode(val code: String){
     init {
-        if (code.isEmpty() || code.length != 3 || code != code.uppercase()) {
-            throw IllegalArgumentException("Invalid code format $code")
+        require(code.isNotEmpty() && code.length == CODE_LENGTH && code == code.uppercase()) {
+            "Invalid code format $code"
         }
     }
 }
@@ -63,8 +69,8 @@ value class CurrencyCode(val code: String){
 @JvmInline
 value class TransactionId(val transactionId: String) {
     init {
-        if (transactionId.isEmpty()){
-            throw IllegalArgumentException("Invalid transaction ID format $transactionId")
+        require (transactionId.isNotEmpty()){
+            "Invalid transaction ID format $transactionId"
         }
     }
 }
