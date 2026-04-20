@@ -53,7 +53,7 @@ value class AccountNumber(val accountNumber: String) {
 @JvmInline
 value class CurrencyAmount(val amount: Double) {
     init {
-        require(amount > ZERO_AMOUNT) {
+        require(amount >= ZERO_AMOUNT) {
             "Invalid amount format $amount"
         }
     }
