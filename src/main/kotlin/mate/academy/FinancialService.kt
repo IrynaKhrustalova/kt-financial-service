@@ -1,6 +1,7 @@
 package mate.academy
 
 class FinancialService {
+
     fun transferFunds(
         source: AccountNumber,
         destination: AccountNumber,
@@ -8,7 +9,8 @@ class FinancialService {
         currencyCode: CurrencyCode,
         transactionId: TransactionId
     ) : String {
-        // TODO: implement
+        return "Transferred ${amount.amount} ${currencyCode.code} from ${source.accountNumber} to " +
+                "${destination.accountNumber}. Transaction ID: ${transactionId.transactionId}"
     }
 
     fun convertCurrency(
@@ -16,7 +18,8 @@ class FinancialService {
         fromCurrency: CurrencyCode,
         toCurrency: CurrencyCode
     ): CurrencyAmount {
-        // TODO: implement
+        val rate = getExchangeRate(fromCurrency, toCurrency)
+        return CurrencyAmount(amount.amount.times(rate))
     }
 
     private fun getExchangeRate(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): Double {
@@ -25,6 +28,43 @@ class FinancialService {
             fromCurrency.code == "USD" && toCurrency.code == "EUR" -> 0.93
             fromCurrency.code == "USD" && toCurrency.code == "GBP" -> 0.82
             else -> 1.0
+        }
+    }
+}
+
+@JvmInline
+value class AccountNumber(val accountNumber: String) {
+    init {
+        val regex = "[A-Za-z]".toRegex()
+        if (accountNumber.length != 10 || accountNumber.isEmpty() || accountNumber.contains(regex)) {
+            throw IllegalArgumentException("Invalid account number format $accountNumber")
+        }
+    }
+}
+
+@JvmInline
+value class CurrencyAmount(val amount: Double) {
+    init {
+        if (amount < 0.0) {
+            throw IllegalArgumentException("Invalid amount format $amount")
+        }
+    }
+}
+
+@JvmInline
+value class CurrencyCode(val code: String){
+    init {
+        if (code.isEmpty() || code.length != 3 || code != code.uppercase()) {
+            throw IllegalArgumentException("Invalid code format $code")
+        }
+    }
+}
+
+@JvmInline
+value class TransactionId(val transactionId: String) {
+    init {
+        if (transactionId.isEmpty()){
+            throw IllegalArgumentException("Invalid transaction ID format $transactionId")
         }
     }
 }
